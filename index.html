@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <title>إدارة الفلوس</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            direction: rtl;
+            text-align: right;
+            background: #f4f4f4;
+            padding: 20px;
+        }
+        .person {
+            background: white;
+            margin: 10px 0;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 0 5px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .info {
+            flex: 1;
+        }
+        input, button {
+            padding: 8px;
+            margin: 5px 0;
+        }
+        .actions button {
+            margin-left: 5px;
+            padding: 5px 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>تسجيل الأشخاص وفلوسهم</h1>
+    <input type="text" id="name" placeholder="اكتب اسم الشخص">
+    <input type="number" id="amount" placeholder="المبلغ">
+    <button onclick="addPerson()">إضافة</button>
+
+    <div id="list"></div>
+
+    <script>
+        let people = JSON.parse(localStorage.getItem("people")) || [];
+
+        function saveData() {
+            localStorage.setItem("people", JSON.stringify(people));
+        }
+
+        function renderList() {
+            let list = document.getElementById("list");
+            list.innerHTML = "";
+            people.forEach((p, index) => {
+                let div = document.createElement("div");
+                div.className = "person";
+
+                let info = document.createElement("div");
+                info.className = "info";
+                info.innerHTML = `<strong>${p.name}</strong>: ${p.amount} دينار`;
+
+                let actions = document.createElement("div");
+                actions.className = "actions";
+
+                // تعديل
+                let editBtn = document.createElement("button");
+                editBtn.textContent = "تعديل";
+                editBtn.onclick = function() {
+                    let newName = prompt("غيّر الاسم:", p.name);
+                    let newAmount = prompt("غيّر المبلغ:", p.amount);
+                    if(newName && newAmount) {
+                        people[index].name = newName;
+                        people[index].amount = newAmount;
+                        saveData();
+                        renderList();
+                    }
+                };
+
+                // حذف
+                let deleteBtn = document.createElement("button");
+                deleteBtn.textContent = "حذف";
+                deleteBtn.onclick = function() {
+                    people.splice(index, 1);
+                    saveData();
+                    renderList();
+                };
+
+                actions.appendChild(editBtn);
+                actions.appendChild(deleteBtn);
+
+                div.appendChild(info);
+                div.appendChild(actions);
+
+                list.appendChild(div);
+            });
+        }
+
+        function addPerson() {
+            let name = document.getElementById("name").value;
+            let amount = document.getElementById("amount").value;
+
+            if(name && amount) {
+                people.push({name: name, amount: amount});
+                saveData();
+                renderList();
+                document.getElementById("name").value = "";
+                document.getElementById("amount").value = "";
+            } else {
+                alert("رجاءً اكتب الاسم والمبلغ");
+            }
+        }
+
+        // أول ما يفتح الموقع يرسم القائمة المخزونة
+        renderList();
+    </script>
+</body>
+</html>
