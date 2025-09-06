@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <title>قائمة الأشخاص والفلوس</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            direction: rtl;
+            text-align: right;
+            background: #f4f4f4;
+            padding: 20px;
+        }
+        .person {
+            background: white;
+            margin: 10px 0;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 0 5px rgba(0,0,0,0.1);
+        }
+        .total {
+            margin-top: 20px;
+            padding: 15px;
+            background: #dff0d8;
+            border-radius: 8px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <h1>قائمة الأشخاص وفلوسهم</h1>
+    <div id="list"></div>
+    <div id="total" class="total"></div>
+
+    <script>
+        let people = JSON.parse(localStorage.getItem("people")) || [];
+
+        function renderList() {
+            let list = document.getElementById("list");
+            let total = document.getElementById("total");
+            list.innerHTML = "";
+
+            let sum = 0;
+            people.forEach(p => {
+                let div = document.createElement("div");
+                div.className = "person";
+                div.innerHTML = `<strong>${p.name}</strong>: ${p.amount} دينار`;
+                list.appendChild(div);
+                sum += parseFloat(p.amount);
+            });
+
+            total.textContent = "المجموع الكلي: " + sum + " دينار";
+        }
+
+        renderList();
+    </script>
+</body>
+</html>
